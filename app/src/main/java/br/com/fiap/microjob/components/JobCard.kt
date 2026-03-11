@@ -9,6 +9,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.outlined.FavoriteBorder
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -34,6 +40,8 @@ import br.com.fiap.microjob.ui.theme.SecondaryYellow
 fun JobCard(
     job: Job,
     onClick: () -> Unit,
+    isFavorite: Boolean = false,
+    onFavoriteClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val imageResId = getJobImageResId(job.id)
@@ -75,6 +83,20 @@ fun JobCard(
                                     )
                                 )
                             )
+                    )
+                }
+                IconButton(
+                    onClick = onFavoriteClick,
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(4.dp)
+                        .size(40.dp)
+                ) {
+                    Icon(
+                        imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
+                        contentDescription = if (isFavorite) "Remover dos favoritos" else "Adicionar aos favoritos",
+                        tint = if (isFavorite) MaterialTheme.colorScheme.error else Color.White,
+                        modifier = Modifier.size(24.dp)
                     )
                 }
                 Box(

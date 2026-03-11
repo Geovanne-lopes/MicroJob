@@ -26,6 +26,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -36,10 +38,12 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import br.com.fiap.microjob.ui.theme.PrimaryPink
+import br.com.fiap.microjob.viewmodel.AuthViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SignUpScreen(
+    authViewModel: AuthViewModel,
     onSignUpSuccess: () -> Unit,
     onBack: () -> Unit
 ) {
@@ -47,6 +51,12 @@ fun SignUpScreen(
     var email by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
     var passwordVisible by rememberSaveable { mutableStateOf(false) }
+    val authState by authViewModel.authState.collectAsState(initial = br.com.fiap.microjob.viewmodel.AuthState())
+    val registerError = authState.registerError
+
+    LaunchedEffect(Unit) {
+        authViewModel.clearRegisterError()
+    }
 
     Scaffold(
         topBar = {
@@ -77,6 +87,15 @@ fun SignUpScreen(
                 color = androidx.compose.material3.MaterialTheme.colorScheme.onSurfaceVariant
             )
             Spacer(modifier = Modifier.height(24.dp))
+
+            if (registerError != null) {
+                Text(
+                    text = registerError,
+                    color = androidx.compose.material3.MaterialTheme.colorScheme.error,
+                    style = androidx.compose.material3.MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
+            }
 
             val colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = PrimaryPink,
@@ -125,7 +144,11 @@ fun SignUpScreen(
             )
             Spacer(modifier = Modifier.height(32.dp))
             Button(
-                onClick = onSignUpSuccess,
+                onClick = {
+                    authViewModel.register(name, email, password) { success, _ ->
+                        if (success) onSignUpSuccess()
+                    }
+                },
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(containerColor = PrimaryPink),
                 shape = RoundedCornerShape(12.dp)

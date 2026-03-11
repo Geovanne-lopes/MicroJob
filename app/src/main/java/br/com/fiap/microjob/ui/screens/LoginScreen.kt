@@ -25,6 +25,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -35,16 +37,24 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import br.com.fiap.microjob.ui.theme.PrimaryPink
+import br.com.fiap.microjob.viewmodel.AuthViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(
+    authViewModel: AuthViewModel,
     onLoginSuccess: () -> Unit,
     onBack: () -> Unit
 ) {
     var email by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
     var passwordVisible by rememberSaveable { mutableStateOf(false) }
+    val authState by authViewModel.authState.collectAsState(initial = br.com.fiap.microjob.viewmodel.AuthState())
+    val loginError = authState.loginError
+
+    LaunchedEffect(Unit) {
+        authViewModel.clearLoginError()
+    }
 
     Scaffold(
         topBar = {
@@ -75,6 +85,15 @@ fun LoginScreen(
                 color = androidx.compose.material3.MaterialTheme.colorScheme.onSurfaceVariant
             )
             Spacer(modifier = Modifier.height(24.dp))
+
+            if (loginError != null) {
+                Text(
+                    text = loginError,
+                    color = androidx.compose.material3.MaterialTheme.colorScheme.error,
+                    style = androidx.compose.material3.MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
+            }
 
             val colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = PrimaryPink,
@@ -113,7 +132,11 @@ fun LoginScreen(
             )
             Spacer(modifier = Modifier.height(32.dp))
             Button(
-                onClick = onLoginSuccess,
+                onClick = {
+                    authViewModel.login(email, password) { success, _ ->
+                        if (success) onLoginSuccess()
+                    }
+                },
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(containerColor = PrimaryPink),
                 shape = RoundedCornerShape(12.dp)

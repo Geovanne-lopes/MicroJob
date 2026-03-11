@@ -39,7 +39,7 @@ import androidx.compose.ui.unit.dp
 import br.com.fiap.microjob.components.BottomNavDestination
 import br.com.fiap.microjob.components.JobCard
 import br.com.fiap.microjob.components.MicroJobBottomBar
-import br.com.fiap.microjob.model.MockData
+import br.com.fiap.microjob.viewmodel.AuthViewModel
 import br.com.fiap.microjob.viewmodel.JobsViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -50,11 +50,14 @@ fun JobFeedScreen(
     onProfileClick: () -> Unit,
     onFavoritesClick: () -> Unit,
     onHomeClick: () -> Unit,
+    authViewModel: AuthViewModel,
     jobsViewModel: JobsViewModel
 ) {
     val jobs by jobsViewModel.jobs.collectAsState()
+    val favoriteIds by jobsViewModel.favoriteIds.collectAsState()
+    val currentUser by authViewModel.currentUser.collectAsState(initial = null)
     var searchQuery by remember { mutableStateOf("") }
-    val userName = MockData.defaultUser.name.split(" ").firstOrNull() ?: "Usuário"
+    val userName = currentUser?.name?.split(" ")?.firstOrNull() ?: "Usuário"
 
     Scaffold(
         topBar = {},
@@ -171,7 +174,9 @@ fun JobFeedScreen(
                     items(filtered, key = { it.id }) { job ->
                         JobCard(
                             job = job,
-                            onClick = { onJobClick(job.id) }
+                            onClick = { onJobClick(job.id) },
+                            isFavorite = job.id in favoriteIds,
+                            onFavoriteClick = { jobsViewModel.toggleFavorite(job.id) }
                         )
                     }
                 }

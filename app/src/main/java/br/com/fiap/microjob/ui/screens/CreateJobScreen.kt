@@ -21,6 +21,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -28,6 +29,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import br.com.fiap.microjob.viewmodel.AuthViewModel
 import br.com.fiap.microjob.viewmodel.JobsViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -35,8 +37,10 @@ import br.com.fiap.microjob.viewmodel.JobsViewModel
 fun CreateJobScreen(
     onJobCreated: () -> Unit,
     onBack: () -> Unit,
+    authViewModel: AuthViewModel,
     jobsViewModel: JobsViewModel
 ) {
+    val currentUser by authViewModel.currentUser.collectAsState(initial = null)
     var title by rememberSaveable { mutableStateOf("") }
     var description by rememberSaveable { mutableStateOf("") }
     var paymentValue by rememberSaveable { mutableStateOf("") }
@@ -127,18 +131,23 @@ fun CreateJobScreen(
             Spacer(modifier = Modifier.height(24.dp))
             Button(
                 onClick = {
-                    val value = paymentValue.replace(',', '.').toDoubleOrNull() ?: 0.0
-                    jobsViewModel.addJob(
-                        title = title.trim(),
-                        description = description.trim(),
-                        paymentValue = value,
-                        location = location.trim(),
-                        contactMethod = contactMethod.trim()
-                    )
-                    onJobCreated()
+                    val user = currentUser
+                    if (user != null) {
+                        val value = paymentValue.replace(',', '.').toDoubleOrNull() ?: 0.0
+                        jobsViewModel.addJob(
+                            title = title.trim(),
+                            description = description.trim(),
+                            paymentValue = value,
+                            location = location.trim(),
+                            contactMethod = contactMethod.trim(),
+                            poster = user
+                        )
+                        authViewModel.onJobPosted(user.id)
+                        onJobCreated()
+                    }
                 },
                 modifier = Modifier.fillMaxWidth(),
-                enabled = title.isNotBlank() && description.isNotBlank() && location.isNotBlank(),
+                enabled = title.isNotBlank() && description.isNotBlank() && location.isNotBlank() && currentUser != null,
                 colors = ButtonDefaults.buttonColors(containerColor = androidx.compose.material3.MaterialTheme.colorScheme.primary)
             ) {
                 Text("Publicar Job")

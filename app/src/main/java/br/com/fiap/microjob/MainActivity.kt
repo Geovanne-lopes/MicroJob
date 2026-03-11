@@ -10,9 +10,10 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import br.com.fiap.microjob.navigation.MicroJobNavGraph
 import br.com.fiap.microjob.ui.theme.MicroJobTheme
+import br.com.fiap.microjob.viewmodel.AuthViewModel
+import br.com.fiap.microjob.viewmodel.AuthViewModelFactory
 import br.com.fiap.microjob.viewmodel.ChatViewModel
 import br.com.fiap.microjob.viewmodel.JobsViewModel
-import br.com.fiap.microjob.viewmodel.ProfileViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -21,13 +22,15 @@ class MainActivity : ComponentActivity() {
         setContent {
             MicroJobTheme {
                 Surface(modifier = Modifier.fillMaxSize()) {
+                    val authViewModel: AuthViewModel = viewModel(
+                        factory = AuthViewModelFactory(applicationContext)
+                    )
                     val jobsViewModel: JobsViewModel = viewModel()
                     val chatViewModel: ChatViewModel = viewModel()
-                    val profileViewModel: ProfileViewModel = viewModel()
                     MicroJobNavGraph(
+                        authViewModel = authViewModel,
                         jobsViewModel = jobsViewModel,
-                        chatViewModel = chatViewModel,
-                        profileViewModel = profileViewModel
+                        chatViewModel = chatViewModel
                     )
                 }
             }

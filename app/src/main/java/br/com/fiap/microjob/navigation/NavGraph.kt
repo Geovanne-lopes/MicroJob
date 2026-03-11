@@ -1,6 +1,9 @@
 package br.com.fiap.microjob.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -14,9 +17,9 @@ import br.com.fiap.microjob.ui.screens.LoginScreen
 import br.com.fiap.microjob.ui.screens.ProfileScreen
 import br.com.fiap.microjob.ui.screens.SignUpScreen
 import br.com.fiap.microjob.ui.screens.WelcomeScreen
+import br.com.fiap.microjob.viewmodel.AuthViewModel
 import br.com.fiap.microjob.viewmodel.ChatViewModel
 import br.com.fiap.microjob.viewmodel.JobsViewModel
-import br.com.fiap.microjob.viewmodel.ProfileViewModel
 
 object Routes {
     const val WELCOME = "welcome"
@@ -36,10 +39,21 @@ object Routes {
 @Composable
 fun MicroJobNavGraph(
     navController: NavHostController = rememberNavController(),
+    authViewModel: AuthViewModel,
     jobsViewModel: JobsViewModel,
-    chatViewModel: ChatViewModel,
-    profileViewModel: ProfileViewModel
+    chatViewModel: ChatViewModel
 ) {
+    val currentUser by authViewModel.currentUser.collectAsState(initial = null)
+
+    LaunchedEffect(currentUser) {
+        if (currentUser != null && navController.currentBackStackEntry?.destination?.route == Routes.WELCOME) {
+            navController.navigate(Routes.JOB_FEED) {
+                popUpTo(Routes.WELCOME) { inclusive = true }
+                launchSingleTop = true
+            }
+        }
+    }
+
     NavHost(
         navController = navController,
         startDestination = Routes.WELCOME
@@ -52,6 +66,7 @@ fun MicroJobNavGraph(
         }
         composable(Routes.LOGIN) {
             LoginScreen(
+                authViewModel = authViewModel,
                 onLoginSuccess = {
                     navController.navigate(Routes.JOB_FEED) {
                         popUpTo(Routes.WELCOME) { inclusive = true }
@@ -63,6 +78,7 @@ fun MicroJobNavGraph(
         }
         composable(Routes.SIGN_UP) {
             SignUpScreen(
+                authViewModel = authViewModel,
                 onSignUpSuccess = {
                     navController.navigate(Routes.JOB_FEED) {
                         popUpTo(Routes.WELCOME) { inclusive = true }
@@ -78,7 +94,8 @@ fun MicroJobNavGraph(
                 onFabClick = { navController.navigate(Routes.CREATE_JOB) },
                 onProfileClick = { navController.navigate(Routes.PROFILE) },
                 onFavoritesClick = { navController.navigate(Routes.FAVORITES) },
-                onHomeClick = { /* já no feed */ },
+                onHomeClick = { },
+                authViewModel = authViewModel,
                 jobsViewModel = jobsViewModel
             )
         }
@@ -86,13 +103,16 @@ fun MicroJobNavGraph(
             FavoritesScreen(
                 onHomeClick = { navController.popBackStack(Routes.JOB_FEED, inclusive = false) },
                 onFavoritesClick = { },
-                onProfileClick = { navController.navigate(Routes.PROFILE) }
+                onProfileClick = { navController.navigate(Routes.PROFILE) },
+                onJobClick = { jobId -> navController.navigate(Routes.jobDetails(jobId)) },
+                jobsViewModel = jobsViewModel
             )
         }
         composable(Routes.CREATE_JOB) {
             CreateJobScreen(
                 onJobCreated = { navController.popBackStack() },
                 onBack = { navController.popBackStack() },
+                authViewModel = authViewModel,
                 jobsViewModel = jobsViewModel
             )
         }
@@ -123,7 +143,14 @@ fun MicroJobNavGraph(
                 onHomeClick = { navController.popBackStack(Routes.JOB_FEED, inclusive = false) },
                 onFavoritesClick = { navController.navigate(Routes.FAVORITES) },
                 onProfileClick = { },
-                profileViewModel = profileViewModel
+                onLogout = {
+                    authViewModel.logout()
+                    navController.navigate(Routes.WELCOME) {
+                        popUpTo(Routes.JOB_FEED) { inclusive = true }
+                        launchSingleTop = true
+                    }
+                },
+                authViewModel = authViewModel
             )
         }
     }
