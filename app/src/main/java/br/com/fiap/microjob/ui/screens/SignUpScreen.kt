@@ -37,7 +37,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
-import br.com.fiap.microjob.ui.theme.PrimaryPink
+import br.com.fiap.microjob.ui.theme.PrimaryBrown
 import br.com.fiap.microjob.viewmodel.AuthViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -69,7 +69,7 @@ fun SignUpScreen(
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = androidx.compose.material3.MaterialTheme.colorScheme.surface,
-                    titleContentColor = PrimaryPink
+                    titleContentColor = PrimaryBrown
                 )
             )
         }
@@ -98,9 +98,9 @@ fun SignUpScreen(
             }
 
             val colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = PrimaryPink,
+                focusedBorderColor = PrimaryBrown,
                 unfocusedBorderColor = androidx.compose.material3.MaterialTheme.colorScheme.outline.copy(alpha = 0.5f),
-                focusedLabelColor = PrimaryPink
+                focusedLabelColor = PrimaryBrown
             )
             OutlinedTextField(
                 value = name,
@@ -150,7 +150,7 @@ fun SignUpScreen(
                     }
                 },
                 modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(containerColor = PrimaryPink),
+                colors = ButtonDefaults.buttonColors(containerColor = PrimaryBrown),
                 shape = RoundedCornerShape(12.dp)
             ) {
                 Text("Criar conta")

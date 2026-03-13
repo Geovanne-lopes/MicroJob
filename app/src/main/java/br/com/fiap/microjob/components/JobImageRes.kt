@@ -10,5 +10,7 @@ fun getJobImageResId(jobId: String): Int? = when (jobId) {
     "job_1" -> R.drawable.job_cortar_grama
     "job_2" -> R.drawable.job_passear_cachorro
     "job_3" -> R.drawable.job_mudanca
+    "job_4" -> R.drawable.job_consertar_torneira
+    "job_5" -> R.drawable.jog_organizar_garagem
     else -> null
 }

@@ -1,5 +1,6 @@
 package br.com.fiap.microjob.ui.screens
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -26,11 +27,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import br.com.fiap.microjob.ui.theme.PrimaryPink
+import br.com.fiap.microjob.R
+import br.com.fiap.microjob.ui.theme.PrimaryBrown
 import br.com.fiap.microjob.ui.theme.SignUpButtonLime
 import br.com.fiap.microjob.ui.theme.WelcomeBackgroundPink
 import br.com.fiap.microjob.ui.theme.WelcomeTitlePurple
@@ -52,7 +56,7 @@ fun WelcomeScreen(
                 .offset(x = 40.dp, y = (-20).dp)
                 .size(120.dp)
                 .clip(CircleShape)
-                .background(PrimaryPink.copy(alpha = 0.25f))
+                .background(PrimaryBrown.copy(alpha = 0.25f))
         )
         Box(
             modifier = Modifier
@@ -60,7 +64,7 @@ fun WelcomeScreen(
                 .offset(x = (-30).dp, y = 40.dp)
                 .size(100.dp)
                 .clip(CircleShape)
-                .background(PrimaryPink.copy(alpha = 0.2f))
+                .background(PrimaryBrown.copy(alpha = 0.2f))
         )
 
         Column(
@@ -104,10 +108,14 @@ fun WelcomeScreen(
                             imageVector = Icons.Default.People,
                             contentDescription = null,
                             modifier = Modifier.size(80.dp),
-                            tint = PrimaryPink.copy(alpha = 0.8f)
+                            tint = PrimaryBrown.copy(alpha = 0.8f)
+                        )
+                        Image(
+                            painter = painterResource(R.drawable.job_trabalhadores),
+                            contentDescription = "Logo da MicroJobs",
+                            contentScale = ContentScale.Crop
                         )
                     }
-
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(
                             text = "Tarefas pequenas. Grande impacto",
@@ -126,7 +134,7 @@ fun WelcomeScreen(
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 32.sp
                                 ),
-                                color = PrimaryPink
+                                color = PrimaryBrown
                             )
                             Text(
                                 text = " Jobs",
@@ -151,7 +159,7 @@ fun WelcomeScreen(
                 Button(
                     onClick = onLogInClick,
                     modifier = Modifier.weight(1f),
-                    colors = ButtonDefaults.buttonColors(containerColor = PrimaryPink),
+                    colors = ButtonDefaults.buttonColors(containerColor = PrimaryBrown),
                     shape = RoundedCornerShape(12.dp)
                 ) {
                     Text(
