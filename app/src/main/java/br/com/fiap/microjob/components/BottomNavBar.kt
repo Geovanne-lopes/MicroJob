@@ -14,7 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
-import br.com.fiap.microjob.ui.theme.SecondaryYellow
+import br.com.fiap.microjob.ui.theme.SecondaryOrange
 
 enum class BottomNavDestination(
     val title: String,
@@ -31,7 +31,7 @@ fun MicroJobBottomBar(
     onDestinationClick: (BottomNavDestination) -> Unit
 ) {
     NavigationBar(
-        containerColor = SecondaryYellow,
+        containerColor = SecondaryOrange,
         contentColor = androidx.compose.ui.graphics.Color(0xFF1C1B1F)
     ) {
         BottomNavDestination.entries.forEach { destination ->
@@ -48,7 +48,7 @@ fun MicroJobBottomBar(
                 selected = selected,
                 onClick = { onDestinationClick(destination) },
                 colors = NavigationBarItemDefaults.colors(
-                    indicatorColor = SecondaryYellow,
+                    indicatorColor = SecondaryOrange,
                     selectedIconColor = androidx.compose.ui.graphics.Color(0xFF1C1B1F),
                     selectedTextColor = androidx.compose.ui.graphics.Color(0xFF1C1B1F),
                     unselectedIconColor = androidx.compose.ui.graphics.Color(0xFF1C1B1F).copy(alpha = 0.7f),

@@ -30,7 +30,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import br.com.fiap.microjob.model.Job
-import br.com.fiap.microjob.ui.theme.SecondaryYellow
+import br.com.fiap.microjob.ui.theme.SecondaryOrange
 
 /**
  * Card reutilizável para exibir um job na lista do feed.
@@ -130,7 +130,7 @@ fun JobCard(
                             text = "R$ %.0f".format(job.paymentValue),
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
-                            color = SecondaryYellow
+                            color = SecondaryOrange
                         )
                     }
                 }
